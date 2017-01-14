@@ -318,8 +318,8 @@ void KangarooMismatcher::createLCP() {
     }
 }
 
-void KangarooMismatcher::findIndex(string text) {
-
+int KangarooMismatcher::findIndex(string text) {
+    return lcpIndices.find(text)->second;
 }
 
 int KangarooMismatcher::RMQ(string text1, string text2) {
