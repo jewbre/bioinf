@@ -247,8 +247,13 @@ int NaiveMismatcher::updateMismatches(int positionInText) {
 class KangarooMismatcher : Mismatcher {
 
 protected:
+
+
     int updateMismatches(int positionInText);
     void init();
+    void createLCP();
+    void findIndex(char* text);
+    int RMQ(char* text1, char* text2);
 
 public:
     KangarooMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal);
@@ -259,6 +264,26 @@ KangarooMismatcher::KangarooMismatcher(char *text, int textLength, char *pattern
     init();
 }
 
+void KangarooMismatcher::init() {
+    createLCP();
+}
+
+void KangarooMismatcher::createLCP() {
+
+}
+
+void KangarooMismatcher::findIndex(char *text) {
+
+}
+
+int KangarooMismatcher::RMQ(char *text1, char *text2) {
+
+}
+
+int KangarooMismatcher::updateMismatches(int positionInText) {
+
+}
+
 int
 main(int argc, char* argv[]) {
 
@@ -267,6 +292,7 @@ main(int argc, char* argv[]) {
     int tLength = 196;
     int pLength = 5;
     int k = 3;
+    
 
     NaiveMismatcher mismatcher(text, tLength, pattern, pLength, k);
 
