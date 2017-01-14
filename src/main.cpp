@@ -323,8 +323,50 @@ void KangarooMismatcher::findIndex(string text) {
 }
 
 int KangarooMismatcher::RMQ(string text1, string text2) {
+    int lcpIndex1 = findIndex(text1);
+    int lcpIndex2 = findIndex(text2);
 
+    if (lcpIndex1 == lcpIndex2) return (int) text1.length();
+    if (lcpIndex1 > lcpIndex2) {
+        int tmp = lcpIndex1;
+        lcpIndex1 = lcpIndex2;
+        lcpIndex2 = tmp;
+    }
+
+    int groupIndex1 = lcpIndex1 / groupSize;
+    int groupIndex2 = lcpIndex2 / groupSize;
+
+    int rmq = 100000;
+    for (int i = groupIndex1 + 1; i <= groupIndex2 - 1; i++) {
+        if (lcpGroups[i] < rmq) {
+            rmq = lcpGroups[i];
+        }
+    }
+    if (rmq == 0) {
+        return rmq;
+    }
+
+    if (groupIndex1 == groupIndex2) {
+        for (int i = lcpIndex1; i < lcpIndex2; ++i) {
+            if (lcp[i] < rmq) {
+                rmq = lcp[i];
+            }
+        }
+    } else {
+        for (int i = lcpIndex1; i < (groupIndex1 + 1) * groupSize; ++i) {
+            if (lcp[i] < rmq) {
+                rmq = lcp[i];
+            }
+        }
+        for (int i = lcpIndex2 - 1; i >= groupIndex2 * groupSize; --i) {
+            if (lcp[i] < rmq) {
+                rmq = lcp[i];
+            }
+        }
+    }
+    return rmq;
 }
+
 
 int KangarooMismatcher::updateMismatches(int positionInText) {
     if (positionInText <= textLength - patternLength) {
