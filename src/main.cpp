@@ -292,7 +292,8 @@ main(int argc, char* argv[]) {
     int tLength = 196;
     int pLength = 5;
     int k = 3;
-    
+    //TODO I need suffix array here :)
+    sa_string suffixArray[];
 
     NaiveMismatcher mismatcher(text, tLength, pattern, pLength, k);
 
