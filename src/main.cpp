@@ -118,6 +118,7 @@ protected:
 
     // This is abstract method, this needs to be implemented
     virtual int updateMismatches(int positionInText) = 0;
+    virtual void init() = 0;
 
 public:
     int* findMismatches();
@@ -206,17 +207,27 @@ int* Mismatcher::findMismatches() {
 }
 
 
-// Derived class
+/**
+ * Derived class
+ */
 class NaiveMismatcher : public Mismatcher {
 protected:
     int updateMismatches(int positionInText);
+    void init();
 
 public:
     NaiveMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal);
 };
 
 NaiveMismatcher::NaiveMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal) :
-        Mismatcher(text, textLength, pattern, patternLength, kVal) {};
+        Mismatcher(text, textLength, pattern, patternLength, kVal) {
+    init();
+};
+
+void NaiveMismatcher::init() {
+    // some empty space initialization
+    cout << "Naive mismatcher init" << endl;
+}
 
 int NaiveMismatcher::updateMismatches(int positionInText) {
     int mismatches = 0;
