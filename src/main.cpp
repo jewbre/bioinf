@@ -258,7 +258,7 @@ main(int argc, char* argv[]) {
     int* mismatches = mismatcher.findMismatches();
 
     for (int i = 0; i < tLength - pLength + 1; i++) {
-        if(mismatches[i] <= k) {
+        if(0 <= mismatches[i] && mismatches[i] <= k) {
             cout << i << ":" << mismatches[i] << endl;
         }
     }
