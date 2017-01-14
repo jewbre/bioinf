@@ -244,6 +244,14 @@ int NaiveMismatcher::updateMismatches(int positionInText) {
     return mismatches;
 }
 
+class KangarooMismatcher : Mismatcher {
+
+protected:
+    int updateMismatches(int positionInText);
+    void init();
+    
+};
+
 int
 main(int argc, char* argv[]) {
 
