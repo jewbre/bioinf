@@ -274,19 +274,47 @@ void KangarooMismatcher::init() {
 }
 
 void KangarooMismatcher::createLCP() {
-    int lcpMin = 100000;
+    int lcpGroupMin = 100000;
     for (int i = 0; i < suffixArray.size() - 1; ++i) {
 
         //Find group minimum
         if (i % groupSize == 0) {
-            lcpMin = 1000000;
             if (i / groupSize > 0) {
-                lcpGroups[i/groupSize - 1] = lcpMin;
+                lcpGroups[i/groupSize - 1] = lcpGroupMin;
             }
+            lcpGroupMin = 1000000;
         }
 
-//        char* substring =
+        //Calculate LCP between string and string i + 1
+        char* string1 = suffixArray[i];
+        char* string2 = suffixArray[i + 1];
+        int string1Length = strlen(string1);
+        int string2Length = strlen(string1);
+        int forLength;
 
+        if (string1Length > string2Length) {
+            forLength = string2Length;
+        } else {
+            forLength = string1Length;
+        }
+        int lcpValue = 0;
+
+        //Compare them for LCP
+        for (int j = 0; j < forLength; ++j) {
+            char c1 = string1[j];
+            char c2 = string2[j];
+            if (c1 == c2) {
+                lcpValue++;
+            } else {
+                //Write LCP value and set group min
+                lcp[i] = lcpValue;
+                lcpIndices.insert(pair<char*, int>(string1, i));
+                if (lcpValue < lcpGroupMin) {
+                    lcpGroupMin = lcpValue;
+                }
+                break;
+            }
+        }
     }
 }
 
@@ -299,7 +327,28 @@ int KangarooMismatcher::RMQ(char *text1, char *text2) {
 }
 
 int KangarooMismatcher::updateMismatches(int positionInText) {
+    if (positionInText <= textLength - patternLength) {
+        int mismatches = 0;
+        int l;
+        string substring = text.substr(positionInText, patternLength);
+        string tempPattern = pattern;
 
+        while (true) {
+            l = RMQ(substring, tempPattern) + 1;
+            if (l > substring.length()) {
+                return mismatches;
+            } else {
+                mismatches++;
+            }
+            substring = substring.substr(l, substring.length());
+            tempPattern = tempPattern.substr(l, tempPattern.length());
+            if (substring.empty() || mismatches > k) {
+                return mismatches;
+            }
+        }
+    } else {
+        return k + 1;
+    }
 }
 
 int
