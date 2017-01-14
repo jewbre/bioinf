@@ -150,7 +150,8 @@ void Mismatcher::defineSubsets(int every) {
 
 int* Mismatcher::findMismatches() {
     int* mismatches = new int[textLength];
-    for(int c = 0; c < textLength; c++) mismatches[c] = 0;
+    // non checked mismatches will have -1
+    for(int c = 0; c < textLength; c++) mismatches[c] = -1;
 
     defineSubsets(1);
 
