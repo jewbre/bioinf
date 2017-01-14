@@ -249,8 +249,15 @@ class KangarooMismatcher : Mismatcher {
 protected:
     int updateMismatches(int positionInText);
     void init();
-    
+
+public:
+    KangarooMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal);
 };
+
+KangarooMismatcher::KangarooMismatcher(char *text, int textLength, char *pattern, int patternLength, int kVal)
+        : Mismatcher(text, textLength, pattern, patternLength, kVal) {
+    init();
+}
 
 int
 main(int argc, char* argv[]) {
