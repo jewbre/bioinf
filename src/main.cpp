@@ -38,6 +38,8 @@
 #include <fstream>
 #include <cstdlib>
 #include <limits>
+#include <math.h>
+#include <map>
 
 #define HAVE_GETOPT_H
 
@@ -248,25 +250,34 @@ class KangarooMismatcher : public Mismatcher {
 
 protected:
     vector<string> suffixArray;
-    pair<string, int> lcpIndices;
+    map<string, int> lcpIndices;
     vector<int> lcp;
     vector<int> lcpGroups;
     int groupSize;
 
     int updateMismatches(int positionInText);
+
     void init();
+
     void createLCP();
-    void findIndex(string text);
+
+    int findIndex(string text);
+
     int RMQ(string text1, string text2);
 
 public:
     KangarooMismatcher(vector<string> suffixArray, string text, int textLength, string pattern, int patternLength, int kVal);
 };
 
-KangarooMismatcher::KangarooMismatcher(vector<string> suffixArray,string text, int textLength, string pattern, int patternLength, int kVal)
+KangarooMismatcher::KangarooMismatcher(vector<string> suffixArray, string text, int textLength, string pattern, int patternLength, int kVal)
         : Mismatcher(text, textLength, pattern, patternLength, kVal) {
     this->suffixArray = suffixArray;
     init();
+}
+
+void KangarooMismatcher::init() {
+    this->groupSize = (int) round(sqrt(suffixArray.size()));
+    createLCP();
 }
 
 void KangarooMismatcher::init() {
