@@ -277,44 +277,61 @@ void KangarooMismatcher::createLCP() {
     int lcpGroupMin = 100000;
     for (int i = 0; i < suffixArray.size() - 1; ++i) {
 
-        //Find group minimum
-        if (i % groupSize == 0) {
-            if (i / groupSize > 0) {
-                lcpGroups[i/groupSize - 1] = lcpGroupMin;
-            }
-            lcpGroupMin = 1000000;
-        }
-
         //Calculate LCP between string and string i + 1
         string string1 = suffixArray[i];
         string string2 = suffixArray[i + 1];
-        int string1Length = strlen(string1);
-        int string2Length = strlen(string1);
-        int forLength;
-
-        if (string1Length > string2Length) {
-            forLength = string2Length;
-        } else {
-            forLength = string1Length;
-        }
-        int lcpValue = 0;
+        int string1Length = (int) string1.length();
+        int string2Length = (int) string2.length();
 
         //Compare them for LCP
-        for (int j = 0; j < forLength; ++j) {
-            char c1 = string1[j];
-            char c2 = string2[j];
-            if (c1 == c2) {
-                lcpValue++;
-            } else {
+        int lcpValue = 0;
+        int j = 0;
+        while (true) {
+
+            if (j == string1Length || j == string2Length) {
                 //Write LCP value and set group min
-                lcp[i] = lcpValue;
+                lcp.push_back(lcpValue);
                 lcpIndices.insert(pair<string, int>(string1, i));
                 if (lcpValue < lcpGroupMin) {
                     lcpGroupMin = lcpValue;
                 }
                 break;
             }
+
+            char c1 = string1[j];
+            char c2 = string2[j];
+            if (c1 == c2) {
+                lcpValue++;
+            } else {
+                //Write LCP value and set group min
+                lcp.push_back(lcpValue);
+                lcpIndices.insert(pair<string, int>(string1, i));
+                if (lcpValue < lcpGroupMin) {
+                    lcpGroupMin = lcpValue;
+                }
+                break;
+            }
+
+            j++;
         }
+
+        //Find group minimum
+        if ((i + 1) % groupSize == 0) {
+            if ((i + 1) / groupSize > 0) {
+                lcpGroups.push_back(lcpGroupMin);
+            }
+            lcpGroupMin = 1000000;
+        }
+    }
+    lcp.push_back(0);
+    lcpIndices.insert(pair<string, int>(suffixArray[suffixArray.size() - 1], (const int &) (suffixArray.size() - 1)));
+
+    // Some weird edge case
+    if ((suffixArray.size() - 1) % groupSize != 0) {
+        if (lcpGroupMin == 1000000) {
+            lcpGroupMin = 0;
+        }
+        lcpGroups.push_back(lcpGroupMin);
     }
 }
 
