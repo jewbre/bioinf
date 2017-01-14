@@ -247,7 +247,11 @@ int NaiveMismatcher::updateMismatches(int positionInText) {
 class KangarooMismatcher : Mismatcher {
 
 protected:
-
+    vector<char*> suffixArray;
+    pair<char*, int> lcpIndices;
+    vector<int> lcp;
+    vector<int> lcpGroups;
+    int groupSize;
 
     int updateMismatches(int positionInText);
     void init();
@@ -256,11 +260,12 @@ protected:
     int RMQ(char* text1, char* text2);
 
 public:
-    KangarooMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal);
+    KangarooMismatcher(vector<char*> suffixArray, char* text, int textLength, char* pattern, int patternLength, int kVal);
 };
 
-KangarooMismatcher::KangarooMismatcher(char *text, int textLength, char *pattern, int patternLength, int kVal)
+KangarooMismatcher::KangarooMismatcher(vector<char*> suffixArray,char* text, int textLength, char *pattern, int patternLength, int kVal)
         : Mismatcher(text, textLength, pattern, patternLength, kVal) {
+    this->suffixArray = suffixArray;
     init();
 }
 
@@ -269,7 +274,20 @@ void KangarooMismatcher::init() {
 }
 
 void KangarooMismatcher::createLCP() {
+    int lcpMin = 100000;
+    for (int i = 0; i < suffixArray.size() - 1; ++i) {
 
+        //Find group minimum
+        if (i % groupSize == 0) {
+            lcpMin = 1000000;
+            if (i / groupSize > 0) {
+                lcpGroups[i/groupSize - 1] = lcpMin;
+            }
+        }
+
+//        char* substring =
+
+    }
 }
 
 void KangarooMismatcher::findIndex(char *text) {
@@ -293,7 +311,6 @@ main(int argc, char* argv[]) {
     int pLength = 5;
     int k = 3;
     //TODO I need suffix array here :)
-    sa_string suffixArray[];
 
     NaiveMismatcher mismatcher(text, tLength, pattern, pLength, k);
 
@@ -301,6 +318,16 @@ main(int argc, char* argv[]) {
 
     for (int i = 0; i < tLength - pLength + 1; i++) {
         if(0 <= mismatches[i] && mismatches[i] <= k) {
+            cout << i << ":" << mismatches[i] << endl;
+        }
+    }
+
+    vector<char*> suffixArray = {"a", "an", "ana", "ban", "n", "na", "nan"};
+
+    KangarooMismatcher kangarooMismatcher(suffixArray, "banana", 6, "ana", 3, 1);
+    int* kangarooMismatches = kangarooMismatcher.findMismatches();
+    for (int i = 0; i < 4; i++) {
+        if(0 <= kangarooMismatches[i] && kangarooMismatches[i] <= k) {
             cout << i << ":" << mismatches[i] << endl;
         }
     }
