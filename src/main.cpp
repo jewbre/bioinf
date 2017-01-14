@@ -48,24 +48,24 @@
 
 #else
 extern "C" {
-  char* optarg;
+  string optarg;
   extern int optind, opterr, optopt;
-  struct option { const char *name; int has_arg; int *flag; int val; };
+  struct option { const string name; int has_arg; int *flag; int val; };
 #define no_argument            0
 #define required_argument      1
 #define optional_argument      2
 #ifdef HAVE_GETOPT_LONG_ONLY
-  extern int getopt_long_only (int argc, char * const argv[],
-    const char *optstring, const struct option *longopts, int
+  extern int getopt_long_only (int argc, string const argv[],
+    const string optstring, const struct option *longopts, int
     *longindex);
 #else
 #warning \
 Gnu Getopt Library not found: \
 cannot implement long option handling
 
-  extern int getopt(int argc, char* const argv[], const char*
+  extern int getopt(int argc, string const argv[], const string
       optstring);
-  inline int getopt_long_only(int argc, char * const argv[], const char
+  inline int getopt_long_only(int argc, string const argv[], const char
       *optstring, const struct option *longopts, int *longindex) {
     return getopt(argc, argv, optstring);
   }
@@ -104,15 +104,15 @@ void usage() {
 
 class Mismatcher {
 protected:
-    char* text;
-    char* pattern;
+    string text;
+    string pattern;
     int textLength;
     int patternLength;
     int k;
     int* subsetPositions;
     int subsetCount;
 
-    Mismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal);
+    Mismatcher(string text, int textLength, string pattern, int patternLength, int kVal);
 
     void defineSubsets(int every);
 
@@ -125,7 +125,7 @@ public:
 
 };
 
-Mismatcher::Mismatcher(char* t, int tLength, char* p, int pLength, int kVal) {
+Mismatcher::Mismatcher(string t, int tLength, string p, int pLength, int kVal) {
     text = t;
     textLength = tLength;
     pattern = p;
@@ -217,10 +217,10 @@ protected:
     void init();
 
 public:
-    NaiveMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal);
+    NaiveMismatcher(string text, int textLength, string pattern, int patternLength, int kVal);
 };
 
-NaiveMismatcher::NaiveMismatcher(char* text, int textLength, char* pattern, int patternLength, int kVal) :
+NaiveMismatcher::NaiveMismatcher(string text, int textLength, string pattern, int patternLength, int kVal) :
         Mismatcher(text, textLength, pattern, patternLength, kVal) {
     init();
 };
@@ -244,11 +244,11 @@ int NaiveMismatcher::updateMismatches(int positionInText) {
     return mismatches;
 }
 
-class KangarooMismatcher : Mismatcher {
+class KangarooMismatcher : public Mismatcher {
 
 protected:
-    vector<char*> suffixArray;
-    pair<char*, int> lcpIndices;
+    vector<string> suffixArray;
+    pair<string, int> lcpIndices;
     vector<int> lcp;
     vector<int> lcpGroups;
     int groupSize;
@@ -256,14 +256,14 @@ protected:
     int updateMismatches(int positionInText);
     void init();
     void createLCP();
-    void findIndex(char* text);
-    int RMQ(char* text1, char* text2);
+    void findIndex(string text);
+    int RMQ(string text1, string text2);
 
 public:
-    KangarooMismatcher(vector<char*> suffixArray, char* text, int textLength, char* pattern, int patternLength, int kVal);
+    KangarooMismatcher(vector<string> suffixArray, string text, int textLength, string pattern, int patternLength, int kVal);
 };
 
-KangarooMismatcher::KangarooMismatcher(vector<char*> suffixArray,char* text, int textLength, char *pattern, int patternLength, int kVal)
+KangarooMismatcher::KangarooMismatcher(vector<string> suffixArray,string text, int textLength, string pattern, int patternLength, int kVal)
         : Mismatcher(text, textLength, pattern, patternLength, kVal) {
     this->suffixArray = suffixArray;
     init();
@@ -286,8 +286,8 @@ void KangarooMismatcher::createLCP() {
         }
 
         //Calculate LCP between string and string i + 1
-        char* string1 = suffixArray[i];
-        char* string2 = suffixArray[i + 1];
+        string string1 = suffixArray[i];
+        string string2 = suffixArray[i + 1];
         int string1Length = strlen(string1);
         int string2Length = strlen(string1);
         int forLength;
@@ -308,7 +308,7 @@ void KangarooMismatcher::createLCP() {
             } else {
                 //Write LCP value and set group min
                 lcp[i] = lcpValue;
-                lcpIndices.insert(pair<char*, int>(string1, i));
+                lcpIndices.insert(pair<string, int>(string1, i));
                 if (lcpValue < lcpGroupMin) {
                     lcpGroupMin = lcpValue;
                 }
@@ -318,11 +318,11 @@ void KangarooMismatcher::createLCP() {
     }
 }
 
-void KangarooMismatcher::findIndex(char *text) {
+void KangarooMismatcher::findIndex(string text) {
 
 }
 
-int KangarooMismatcher::RMQ(char *text1, char *text2) {
+int KangarooMismatcher::RMQ(string text1, string text2) {
 
 }
 
@@ -352,7 +352,7 @@ int KangarooMismatcher::updateMismatches(int positionInText) {
 }
 
 int
-main(int argc, char* argv[]) {
+main(int argc, string argv[]) {
 
     char text[] = "Now, you will have a second problem, is that str isn't large enough to hold str2. So you will need to increase the length of it. Otherwise, you will overrun str - which is also undefined behavior.";
     char pattern[] = "overa";
@@ -371,7 +371,7 @@ main(int argc, char* argv[]) {
         }
     }
 
-    vector<char*> suffixArray = {"a", "an", "ana", "ban", "n", "na", "nan"};
+    vector<string> suffixArray = {"a", "an", "ana", "ban", "n", "na", "nan"};
 
     KangarooMismatcher kangarooMismatcher(suffixArray, "banana", 6, "ana", 3, 1);
     int* kangarooMismatches = kangarooMismatcher.findMismatches();
@@ -387,7 +387,7 @@ main(int argc, char* argv[]) {
 
 
 //int
-//main(int argc, char* argv[]) {
+//main(int argc, string argv[]) {
 //  program_name = argv[0];
 //
 //  ifstream is;
@@ -395,7 +395,7 @@ main(int argc, char* argv[]) {
 //  // Handle arguments
 //  int opt;
 //  int option_index;
-//  const char* optstring="hf:s:";
+//  const string optstring="hf:s:";
 //  while ((opt = getopt_long_only(argc, argv, optstring, long_options,
 //          &option_index)) !=-1){
 //    switch (opt) {
