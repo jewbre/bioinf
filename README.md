@@ -1,6 +1,5 @@
-# String matching with k mismatches (work in progress)
+# String matching with k mismatches
 
-Project uses [Enhanced Suffix arrays](https://github.com/hermanstehouwer/Enhanced-Suffix-Arrays) by Herman Stehouwer
 
 ## Build requirements
 * C++ Compiler (e.g. GNU GCC)
