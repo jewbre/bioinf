@@ -174,7 +174,7 @@ class KangarooMismatcher : public Mismatcher {
 
 protected:
     int* suffixArray;
-    int* isa;
+    int* inverseSuffixArray;
     int* lcp;
 
     int updateMismatches(int positionInText);
@@ -193,9 +193,9 @@ KangarooMismatcher::KangarooMismatcher(int sa[], int isa[], char *text, int text
                                        int kVal)
         : Mismatcher(text, textLength, pattern, patternLength, kVal) {
     this->suffixArray = new int[textLength + patternLength + 1];
-    this->isa = new int[textLength + patternLength + 1];
+    this->inverseSuffixArray = new int[textLength + patternLength + 1];
     this->suffixArray = sa;
-    this->isa = isa;
+    this->inverseSuffixArray = isa;
     init();
 }
 
@@ -206,7 +206,7 @@ void KangarooMismatcher::init() {
 
 void KangarooMismatcher::createLCP() {
     char* textAndPattern = new char[textLength + patternLength + 1];
-    strcat(textAndPattern, text);
+    strcpy(textAndPattern, text);
     strcat(textAndPattern, "~");
     strcat(textAndPattern, pattern);
     lcp = new int[textLength + patternLength + 1];
@@ -230,8 +230,8 @@ void KangarooMismatcher::createLCP() {
 }
 
 int KangarooMismatcher::RMQ(int index1, int index2) {
-    int lcpIndex1 = isa[index1];
-    int lcpIndex2 = isa[index2];
+    int lcpIndex1 = inverseSuffixArray[index1];
+    int lcpIndex2 = inverseSuffixArray[index2];
     int rmq = 100000;
     if (lcpIndex1 > lcpIndex2) {
         for (int i = lcpIndex2; i < lcpIndex1; ++i) {
@@ -284,7 +284,7 @@ int main(void) {
     int text_len = strlen(text);
     int patternLength = strlen(pattern);
     char* textAndPattern = new char[text_len + patternLength + 1];
-    strcat(textAndPattern, text);
+    strcpy(textAndPattern, text);
     strcat(textAndPattern, "~");
     strcat(textAndPattern, pattern);
     int *suffix_array;
