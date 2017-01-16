@@ -1,4 +1,7 @@
 build/
 bin/
 main
+*.o
+*.d
+.release_time
 
