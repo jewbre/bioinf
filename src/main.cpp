@@ -192,8 +192,6 @@ public:
 KangarooMismatcher::KangarooMismatcher(int sa[], int isa[], char *text, int textLength, char *pattern, int patternLength,
                                        int kVal)
         : Mismatcher(text, textLength, pattern, patternLength, kVal) {
-    this->suffixArray = new int[textLength + patternLength + 1];
-    this->inverseSuffixArray = new int[textLength + patternLength + 1];
     this->suffixArray = sa;
     this->inverseSuffixArray = isa;
     init();
@@ -202,6 +200,7 @@ KangarooMismatcher::KangarooMismatcher(int sa[], int isa[], char *text, int text
 void KangarooMismatcher::init() {
     cout << "\nInit Kangaroo mismatcher\n";
     createLCP();
+    cout << "\nCreated LCP, algorithm starting\n";
 }
 
 void KangarooMismatcher::createLCP() {
@@ -279,8 +278,12 @@ int KangarooMismatcher::updateMismatches(int positionInText) {
 
 int main(void) {
 
+    //CHANGE TEXT AND PATTERN HERE
     char text[] = "banana";
     char pattern[] = "ana";
+    int k = 1;
+
+
     int text_len = strlen(text);
     int patternLength = strlen(pattern);
     char* textAndPattern = new char[text_len + patternLength + 1];
@@ -289,8 +292,6 @@ int main(void) {
     strcat(textAndPattern, pattern);
     int *suffix_array;
     int *inverse_sa;
-    int k = 1;
-    cout << textAndPattern;
 
     suffix_array = (int *) malloc((text_len + patternLength + 1) * sizeof(int));
     inverse_sa = (int *) malloc((text_len + patternLength + 1) * sizeof(int));
@@ -299,23 +300,13 @@ int main(void) {
         printf("sais failed\n");
         exit(EXIT_FAILURE);
     }
-//    int suffix_array[] = { 9, 7, 1, 3, 5, 0, 8, 2, 4, 6 };
 
     for (int i=0; i < text_len + patternLength + 1; i++) {
         inverse_sa[suffix_array[i]] = i;
     }
 
-    for (int j = 0; j < patternLength + text_len + 1; ++j) {
-        cout << suffix_array[j];
-    }
-    cout << "\n";
-
-    for (int j = 0; j < patternLength + text_len + 1; ++j) {
-        cout << inverse_sa[j];
-    }
-
-    clock_t begin = clock();
     NaiveMismatcher mismatcher(text, text_len, pattern, patternLength, k);
+    clock_t begin = clock();
     int* mismatches = mismatcher.findMismatches();
     clock_t end = clock();
     double elapsed_secs1 = double(end - begin) / CLOCKS_PER_SEC;
@@ -341,7 +332,6 @@ int main(void) {
     cout << endl << "Time:" << endl;
     cout << elapsed_secs1 << endl;
     cout << elapsed_secs2 << endl;
-
     return 0;
 }
 
